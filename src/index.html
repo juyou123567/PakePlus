@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#1a237e">
+    <title>铁路工务段专家库</title>
+    <!-- 外部样式 -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- ===== 顶部导航栏（可隐藏） ===== -->
+    <header class="header">
+        <div class="header-left">
+            <div class="header-logo">📞</div>
+            <div>
+                <h1>工务段专家库</h1>
+                <p>铁路工务 · 专业保障</p>
+            </div>
+        </div>
+        <div class="header-stats">
+            <div class="stat-item">
+                <div class="stat-number" id="totalExperts">0</div>
+                <div class="stat-label">专家总数</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="activeExperts" style="color: #81c784;">0</div>
+                <div class="stat-label">在线专家</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ===== 筛选栏（可隐藏） ===== -->
+    <div class="filter-bar">
+        <label>📂 分类：</label>
+        <button class="filter-btn active" data-filter="all">🚄 全部</button>
+        <button class="filter-btn" data-filter="钢轨探伤">🔍 钢轨探伤</button>
+        <button class="filter-btn" data-filter="桥隧">🌉 桥隧</button>
+        <button class="filter-btn" data-filter="线路">🛤️ 线路</button>
+        <button class="filter-btn" data-filter="道口">🚧 道口</button>
+        <button class="filter-btn" data-filter="路基">⛰️ 路基</button>
+        <button class="filter-btn" data-filter="大型养路机械">🚜 大机</button>
+        <button class="filter-btn" data-filter="钢轨焊接">🔥 焊接</button>
+        <button class="filter-btn" data-filter="测量">📐 测量</button>
+        <button class="filter-btn" data-filter="调度">📡 调度</button>
+        <button class="filter-btn" data-filter="安全">🛡️ 安全</button>
+        <button class="filter-btn" data-filter="材料">📦 材料</button>
+        <button class="filter-btn" data-filter="教育">📚 教育</button>
+        <button class="filter-btn" data-filter="绿化">🌳 绿化</button>
+        <button class="filter-btn" data-filter="防洪">🌊 防洪</button>
+        <button class="filter-btn" data-filter="信息化">💻 信息化</button>
+        <div class="filter-search">
+            <input type="text" id="searchInput" placeholder="🔍 搜索专家...">
+        </div>
+    </div>
+
+    <!-- ===== 专家网格 ===== -->
+    <div class="expert-grid" id="expertGrid"></div>
+
+    <!-- ===== 底部 ===== -->
+    <div class="footer">
+        © 2026 铁路工务段专家库 · 匠心守护铁路安全
+    </div>
+
+    <!-- ===== 专家详情弹窗 ===== -->
+    <div class="detail-overlay" id="detailOverlay">
+        <div class="detail-modal">
+            <button class="detail-close" id="detailClose">✕</button>
+            <div class="detail-content" id="detailContent">
+                <!-- 由 JavaScript 动态填充 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== 回到顶部按钮 ===== -->
+    <button class="scroll-top-btn" id="scrollTopBtn" title="回到顶部">⬆</button>
+
+    <!-- ===== 视频通话弹窗 ===== -->
+    <div class="video-overlay" id="videoOverlay">
+        <div class="video-container">
+            <!-- 通话头部 -->
+            <div class="video-header">
+                <div class="video-header-left">
+                    <div class="video-caller-avatar" id="callerAvatar">👤</div>
+                    <div class="video-caller-info">
+                        <h3 id="callerName">专家姓名</h3>
+                        <p id="callerField">领域 · 通话中</p>
+                    </div>
+                </div>
+                <div class="call-timer" id="callTimer">00:00</div>
+            </div>
+
+            <!-- 视频主区域 -->
+            <div class="video-main" id="videoMain">
+                <canvas id="videoCanvas"></canvas>
+                <!-- 自己的小窗口 -->
+                <div class="video-self">
+                    <div class="self-placeholder">🎥 我</div>
+                </div>
+            </div>
+
+            <!-- 通话控制按钮 -->
+            <div class="video-controls">
+                <button class="ctrl-btn" id="muteBtn" title="静音">🎤</button>
+                <button class="ctrl-btn end-call" id="endCallBtn" title="挂断">📞</button>
+                <button class="ctrl-btn" id="speakerBtn" title="扬声器">🔊</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== 外部 JavaScript ===== -->
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+
+</body>
+</html>
