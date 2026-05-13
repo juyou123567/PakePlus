@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>轨距智测先锋 - 智能轨距测量系统</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- ===== 登录页面 ===== -->
+    <div class="login-overlay" id="loginOverlay">
+        <div class="login-container">
+            <div class="login-left">
+                <div class="login-logo">
+                    <i class="fas fa-train"></i>
+                    <h1>轨距智测先锋</h1>
+                    <p>智能轨距测量系统 v2.0</p>
+                </div>
+                <div class="login-features">
+                    <div class="login-feature"><i class="fas fa-ruler-combined"></i><span>红外自动测量 · 精度±0.5mm</span></div>
+                    <div class="login-feature"><i class="fas fa-bluetooth-b"></i><span>蓝牙实时同步 · 数据上云</span></div>
+                    <div class="login-feature"><i class="fas fa-chart-line"></i><span>智能分析 · 自动生成报告</span></div>
+                    <div class="login-feature"><i class="fas fa-shield-alt"></i><span>双重校验 · 安全可靠</span></div>
+                </div>
+            </div>
+            <div class="login-right">
+                <div class="login-form" id="loginForm">
+                    <h2>欢迎登录</h2>
+                    <p class="login-desc">请登录您的账号以使用轨距智测先锋</p>
+                    <div class="login-input-group">
+                        <label><i class="fas fa-user"></i></label>
+                        <input type="text" id="loginUsername" placeholder="用户名" autocomplete="username">
+                    </div>
+                    <div class="login-input-group">
+                        <label><i class="fas fa-lock"></i></label>
+                        <input type="password" id="loginPassword" placeholder="密码" autocomplete="current-password">
+                    </div>
+                    <div class="login-options">
+                        <label><input type="checkbox" id="rememberMe" checked> 记住我</label>
+                        <a href="#" id="switchToRegister">注册账号</a>
+                    </div>
+                    <button class="btn btn-primary login-btn" id="btnLogin"><i class="fas fa-sign-in-alt"></i> 登录</button>
+                    <p class="login-hint">默认账号: admin / 密码: 123456</p>
+                </div>
+                <div class="login-form" id="registerForm" style="display:none;">
+                    <h2>注册账号</h2>
+                    <p class="login-desc">创建一个新账号以使用轨距智测先锋</p>
+                    <div class="login-input-group">
+                        <label><i class="fas fa-user"></i></label>
+                        <input type="text" id="regUsername" placeholder="用户名">
+                    </div>
+                    <div class="login-input-group">
+                        <label><i class="fas fa-lock"></i></label>
+                        <input type="password" id="regPassword" placeholder="密码">
+                    </div>
+                    <div class="login-input-group">
+                        <label><i class="fas fa-lock"></i></label>
+                        <input type="password" id="regConfirmPassword" placeholder="确认密码">
+                    </div>
+                    <div class="login-input-group">
+                        <label><i class="fas fa-building"></i></label>
+                        <input type="text" id="regCompany" placeholder="单位名称（选填）">
+                    </div>
+                    <div class="login-options">
+                        <label><input type="checkbox" id="agreeTerms" checked> 同意服务条款</label>
+                        <a href="#" id="switchToLogin">已有账号？登录</a>
+                    </div>
+                    <button class="btn btn-primary login-btn" id="btnRegister"><i class="fas fa-user-plus"></i> 注册</button>
+                    <p class="login-hint">注册后即可使用全部功能</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== 主应用 ===== -->
+    <div class="app-container" id="appContainer" style="display:none;">
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-train"></i>
+                    <span>轨距智测先锋</span>
+                </div>
+                <button class="sidebar-close" id="sidebarClose"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="sidebar-menu">
+                <a href="#" class="menu-item active" data-page="dashboard"><i class="fas fa-chart-line"></i><span>实时测量</span></a>
+                <a href="#" class="menu-item" data-page="devices"><i class="fas fa-bluetooth-b"></i><span>设备管理</span></a>
+                <a href="#" class="menu-item" data-page="records"><i class="fas fa-database"></i><span>数据记录</span></a>
+                <a href="#" class="menu-item" data-page="analysis"><i class="fas fa-chart-bar"></i><span>数据分析</span></a>
+                <a href="#" class="menu-item" data-page="calibration"><i class="fas fa-tools"></i><span>校准维护</span></a>
+                <a href="#" class="menu-item" data-page="export"><i class="fas fa-file-export"></i><span>导出分享</span></a>
+                <a href="#" class="menu-item" data-page="settings"><i class="fas fa-cog"></i><span>系统设置</span></a>
+            </div>
+            <div class="sidebar-footer">
+                <div class="device-status">
+                    <span class="status-dot disconnected"></span>
+                    <span id="statusText">未连接</span>
+                </div>
+                <div class="version">v2.0.0</div>
+            </div>
+        </nav>
+
+        <main class="main-content" id="mainContent">
+            <header class="topbar">
+                <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+                <div class="topbar-title">
+                    <h1 id="pageTitle">实时测量</h1>
+                    <span class="subtitle" id="pageSubtitle">轨距智测先锋 · 智能测量系统</span>
+                </div>
+                <div class="topbar-actions">
+                    <button class="btn-icon" id="btnNotification" title="通知"><i class="fas fa-bell"></i><span class="badge">3</span></button>
+                    <button class="btn-icon" id="btnFullscreen" title="全屏"><i class="fas fa-expand"></i></button>
+                    <div class="user-avatar" id="userAvatar" title="个人信息" style="cursor:pointer;">
+                        <i class="fas fa-user-circle"></i>
+                        <span class="user-name" id="headerUserName">管理员</span>
+                    </div>
+                    <button class="btn-icon" id="btnLogout" title="退出登录" style="color:var(--danger);"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+            </header>
+
+            <div class="page-container">
+                <!-- 实时测量 -->
+                <div class="page active" id="page-dashboard">
+                    <div class="dashboard-grid">
+                        <div class="card mode-selector">
+                            <div class="card-header"><h3><i class="fas fa-exchange-alt"></i> 测量模式</h3></div>
+                            <div class="mode-buttons">
+                                <button class="mode-btn active" data-mode="single"><i class="fas fa-dot-circle"></i><span>单次测量</span></button>
+                                <button class="mode-btn" data-mode="continuous"><i class="fas fa-play"></i><span>连续扫描</span></button>
+                                <button class="mode-btn" data-mode="marker"><i class="fas fa-map-pin"></i><span>手动打点</span></button>
+                            </div>
+                        </div>
+                        <div class="card gauge-panel">
+                            <div class="card-header">
+                                <h3><i class="fas fa-tachometer-alt"></i> 实时测量数据</h3>
+                                <div class="card-actions">
+                                    <span class="recording-indicator" id="recordingIndicator"><span class="rec-dot"></span> 记录中</span>
+                                    <button class="btn-sm btn-primary" id="btnStartMeasure"><i class="fas fa-play"></i> 开始测量</button>
+                                </div>
+                            </div>
+                            <div class="gauge-grid">
+                                <div class="gauge-item"><div class="gauge-label">轨距</div><div class="gauge-value" id="gaugeGauge">1435.0</div><div class="gauge-unit">mm</div><div class="gauge-bar"><div class="gauge-fill" style="width:50%;"></div></div><div class="gauge-range">标准: 1435mm</div></div>
+                                <div class="gauge-item"><div class="gauge-label">水平（超高）</div><div class="gauge-value" id="gaugeLevel">0.0</div><div class="gauge-unit">mm</div><div class="gauge-bar"><div class="gauge-fill level-fill" style="width:0%;"></div></div><div class="gauge-range">标准: ±5mm</div></div>
+                                <div class="gauge-item"><div class="gauge-label">三角坑</div><div class="gauge-value" id="gaugeTwist">0.0</div><div class="gauge-unit">mm</div><div class="gauge-bar"><div class="gauge-fill twist-fill" style="width:0%;"></div></div><div class="gauge-range">标准: ±3mm</div></div>
+                                <div class="gauge-item"><div class="gauge-label">轨向</div><div class="gauge-value" id="gaugeAlign">0.0</div><div class="gauge-unit">mm</div><div class="gauge-bar"><div class="gauge-fill align-fill" style="width:0%;"></div></div><div class="gauge-range">标准: ±4mm</div></div>
+                            </div>
+                        </div>
+                        <div class="card analog-panel">
+                            <div class="card-header"><h3><i class="fas fa-gauge-high"></i> 模拟仪表</h3></div>
+                            <div class="analog-container"><canvas id="analogGauge" width="280" height="280"></canvas></div>
+                        </div>
+                        <div class="card env-panel">
+                            <div class="card-header"><h3><i class="fas fa-temperature-high"></i> 环境补偿</h3></div>
+                            <div class="env-grid">
+                                <div class="env-item"><i class="fas fa-thermometer-half"></i><div class="env-info"><span class="env-label">温度</span><span class="env-value" id="envTemp">25.3°C</span></div></div>
+                                <div class="env-item"><i class="fas fa-tint"></i><div class="env-info"><span class="env-label">湿度</span><span class="env-value" id="envHumidity">62%</span></div></div>
+                                <div class="env-item"><i class="fas fa-compress-arrows-alt"></i><div class="env-info"><span class="env-label">补偿值</span><span class="env-value" id="envComp">+0.02mm</span></div></div>
+                                <div class="env-item"><i class="fas fa-battery-three-quarters"></i><div class="env-info"><span class="env-label">设备电量</span><span class="env-value" id="envBattery">85%</span></div></div>
+                            </div>
+                        </div>
+                        <div class="card chart-panel">
+                            <div class="card-header"><h3><i class="fas fa-wave-square"></i> 实时趋势曲线</h3><div class="card-actions"><select class="chart-select" id="chartMetricSelect"><option value="gauge">轨距</option><option value="level">水平</option><option value="twist">三角坑</option></select></div></div>
+                            <div class="chart-container"><canvas id="realtimeChart"></canvas></div>
+                        </div>
+                        <div class="card alarm-panel">
+                            <div class="card-header"><h3><i class="fas fa-exclamation-triangle"></i> 超限报警</h3><button class="btn-sm btn-outline" id="btnAlarmSettings"><i class="fas fa-sliders-h"></i> 阈值设置</button></div>
+                            <div class="alarm-list" id="alarmList">
+                                <div class="alarm-item safe"><i class="fas fa-check-circle"></i><span>轨距: 1435.0mm (正常)</span></div>
+                                <div class="alarm-item safe"><i class="fas fa-check-circle"></i><span>水平: 0.0mm (正常)</span></div>
+                                <div class="alarm-item safe"><i class="fas fa-check-circle"></i><span>三角坑: 0.0mm (正常)</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 设备管理 -->
+                <div class="page" id="page-devices">
+                    <div class="devices-layout">
+                        <div class="card device-scan-panel">
+                            <div class="card-header"><h3><i class="fas fa-search"></i> 蓝牙扫描</h3><div class="card-actions"><button class="btn-sm btn-primary" id="btnScan"><i class="fas fa-sync-alt"></i> 扫描设备</button></div></div>
+                            <div class="scan-status"><div class="scanning-indicator" id="scanningIndicator"><div class="spinner"></div><span>正在扫描...</span></div></div>
+                            <div class="device-list" id="deviceList"></div>
+                        </div>
+                        <div class="card device-info-panel">
+                            <div class="card-header"><h3><i class="fas fa-info-circle"></i> 设备信息</h3></div>
+                            <div class="device-details" id="deviceDetails">
+                                <div class="detail-row"><span class="detail-label">设备名称</span><span class="detail-value" id="detailDeviceName">未选择设备</span></div>
+                                <div class="detail-row"><span class="detail-label">固件版本</span><span class="detail-value">--</span></div>
+                                <div class="detail-row"><span class="detail-label">硬件序列号</span><span class="detail-value">--</span></div>
+                                <div class="detail-row"><span class="detail-label">校准有效期</span><span class="detail-value">--</span></div>
+                                <div class="detail-row"><span class="detail-label">连接状态</span><span class="detail-value"><span class="status-dot disconnected"></span> 未连接</span></div>
+                                <div class="detail-row"><span class="detail-label">上次使用</span><span class="detail-value">--</span></div>
+                            </div>
+                            <div class="device-actions">
+                                <button class="btn btn-danger" id="btnDisconnect"><i class="fas fa-plug"></i> 断开连接</button>
+                                <button class="btn btn-outline" id="btnForget"><i class="fas fa-trash"></i> 移除设备</button>
+                            </div>
+                        </div>
+                        <div class="card saved-devices-panel">
+                            <div class="card-header"><h3><i class="fas fa-save"></i> 已保存设备 <span style="font-size:12px;color:var(--text-light);font-weight:400;">（双击名称可修改）</span></h3></div>
+                            <div class="saved-devices-list"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 数据记录 -->
+                <div class="page" id="page-records">
+                    <div class="records-layout">
+                        <div class="card record-form-panel">
+                            <div class="card-header"><h3><i class="fas fa-edit"></i> 新建测量记录</h3><button class="btn-sm btn-primary" id="btnSaveRecord"><i class="fas fa-save"></i> 保存记录</button></div>
+                            <div class="record-form">
+                                <div class="form-row">
+                                    <div class="form-group"><label>线路名称</label><select id="recordLine"><option value="">请选择线路</option><option value="京沪高铁">京沪高铁</option><option value="京广高铁">京广高铁</option><option value="沪昆高铁">沪昆高铁</option><option value="哈大高铁">哈大高铁</option><option value="京津城际">京津城际</option><option value="沪宁城际">沪宁城际</option><option value="广深港高铁">广深港高铁</option><option value="沈阳地铁1号线">沈阳地铁1号线</option><option value="沈阳地铁2号线">沈阳地铁2号线</option><option value="自定义">自定义线路</option></select></div>
+                                    <div class="form-group"><label>行别</label><select id="recordDirection"><option value="上行">上行</option><option value="下行">下行</option><option value="单线">单线</option></select></div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group"><label>股道编号</label><select id="recordTrack"><option value="">请选择股道</option><option value="I道">I道</option><option value="II道">II道</option><option value="III道">III道</option><option value="4道">4道</option><option value="5道">5道</option><option value="6道">6道</option></select></div>
+                                    <div class="form-group"><label>道岔编号</label><input type="text" id="recordSwitch" placeholder="如: 1#、2#..."></div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group"><label>起始公里标</label><input type="text" id="recordStartKm" placeholder="如: K100+500"></div>
+                                    <div class="form-group"><label>终止公里标</label><input type="text" id="recordEndKm" placeholder="如: K101+200"></div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group"><label>轨号范围</label><input type="text" id="recordRailNum" placeholder="如: 1-100"></div>
+                                    <div class="form-group"><label>测量人员</label><input type="text" id="recordOperator" placeholder="姓名"></div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group"><label>GPS坐标</label><div class="gps-input"><input type="text" id="recordGps" placeholder="点击获取GPS坐标" readonly><button class="btn-sm btn-outline" id="btnGetGps"><i class="fas fa-map-marker-alt"></i> 获取</button></div></div>
+                                    <div class="form-group"><label>备注</label><input type="text" id="recordNote" placeholder="附加说明"></div>
+                                </div>
+                                <div class="form-row media-row">
+                                    <div class="form-group"><label>多媒体附件</label><div class="media-buttons"><button class="btn-sm btn-outline" id="btnAddPhoto"><i class="fas fa-camera"></i> 拍照</button><button class="btn-sm btn-outline" id="btnAddVoice"><i class="fas fa-microphone"></i> 录音</button><button class="btn-sm btn-outline" id="btnAddNote"><i class="fas fa-sticky-note"></i> 文字备注</button></div></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card record-list-panel">
+                            <div class="card-header"><h3><i class="fas fa-list"></i> 历史记录</h3><div class="card-actions"><input type="text" class="search-input" placeholder="搜索记录..." id="recordSearch"><select class="filter-select" id="recordFilter"><option value="all">全部</option><option value="today">今天</option><option value="week">本周</option><option value="month">本月</option></select></div></div>
+                            <div class="record-list" id="recordList"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 数据分析 -->
+                <div class="page" id="page-analysis">
+                    <div class="analysis-layout">
+                        <div class="card trend-chart-panel">
+                            <div class="card-header"><h3><i class="fas fa-chart-line"></i> 趋势图表</h3><div class="card-actions"><select class="chart-select" id="analysisMetricSelect"><option value="gauge">轨距</option><option value="level">水平</option><option value="twist">三角坑</option></select><button class="btn-sm btn-outline" id="btnCompare"><i class="fas fa-layer-group"></i> 对比分析</button></div></div>
+                            <div class="chart-container large-chart"><canvas id="trendChart"></canvas></div>
+                        </div>
+                        <div class="card stats-panel">
+                            <div class="card-header"><h3><i class="fas fa-calculator"></i> 统计报表</h3></div>
+                            <div class="stats-grid">
+                                <div class="stat-card"><div class="stat-icon"><i class="fas fa-arrow-up"></i></div><div class="stat-info"><span class="stat-label">最大值</span><span class="stat-value" id="statMax">1436.2 mm</span></div></div>
+                                <div class="stat-card"><div class="stat-icon"><i class="fas fa-arrow-down"></i></div><div class="stat-info"><span class="stat-label">最小值</span><span class="stat-value" id="statMin">1433.8 mm</span></div></div>
+                                <div class="stat-card"><div class="stat-icon"><i class="fas fa-divide"></i></div><div class="stat-info"><span class="stat-label">平均值</span><span class="stat-value" id="statAvg">1435.0 mm</span></div></div>
+                                <div class="stat-card"><div class="stat-icon"><i class="fas fa-sigma"></i></div><div class="stat-info"><span class="stat-label">标准差</span><span class="stat-value" id="statStd">0.42 mm</span></div></div>
+                                <div class="stat-card"><div class="stat-icon"><i class="fas fa-check-circle"></i></div><div class="stat-info"><span class="stat-label">合格率</span><span class="stat-value" id="statPassRate">98.3%</span></div></div>
+                                <div class="stat-card"><div class="stat-icon"><i class="fas fa-times-circle"></i></div><div class="stat-info"><span class="stat-label">超限点数</span><span class="stat-value" id="statOverLimit">2</span></div></div>
+                            </div>
+                        </div>
+                        <div class="card chart-row">
+                            <div class="card pie-chart-panel"><div class="card-header"><h3><i class="fas fa-chart-pie"></i> 超限分布</h3></div><div class="chart-container small-chart"><canvas id="pieChart"></canvas></div></div>
+                            <div class="card histogram-panel"><div class="card-header"><h3><i class="fas fa-chart-bar"></i> 偏差分布直方图</h3></div><div class="chart-container small-chart"><canvas id="histogramChart"></canvas></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 校准维护 -->
+                <div class="page" id="page-calibration">
+                    <div class="calibration-layout">
+                        <div class="card zero-cal-panel">
+                            <div class="card-header"><h3><i class="fas fa-crosshairs"></i> 零点校准</h3></div>
+                            <div class="cal-content"><p>将轨距尺放置在标准基准面上，点击"零点校准"将当前测量值置零。</p><div class="cal-value-display"><span>当前偏移量:</span><span class="cal-value">+0.15 mm</span></div><button class="btn btn-primary" id="btnZeroCal"><i class="fas fa-crosshairs"></i> 零点校准</button></div>
+                        </div>
+                        <div class="card sensor-cal-panel">
+                            <div class="card-header"><h3><i class="fas fa-microchip"></i> 传感器校准</h3></div>
+                            <div class="cal-content"><p>输入标准轨距值（如1435mm），自动修正传感器偏移量。</p><div class="form-row"><div class="form-group"><label>标准轨距值 (mm)</label><input type="number" id="standardGauge" value="1435" step="0.1"></div><div class="form-group"><label>当前测量值 (mm)</label><input type="number" id="currentGauge" value="1435.2" step="0.1" readonly></div></div><button class="btn btn-primary" id="btnSensorCal"><i class="fas fa-microchip"></i> 执行传感器校准</button></div>
+                        </div>
+                        <div class="card temp-comp-panel">
+                            <div class="card-header"><h3><i class="fas fa-temperature-high"></i> 温度补偿系数</h3></div>
+                            <div class="cal-content"><p>根据红外传感器特性调整温度补偿算法参数。</p><div class="form-row"><div class="form-group"><label>补偿系数 (mm/°C)</label><input type="number" id="tempCoeff" value="0.012" step="0.001"></div><div class="form-group"><label>参考温度 (°C)</label><input type="number" id="refTemp" value="20.0" step="0.1"></div></div><button class="btn btn-primary" id="btnTempComp"><i class="fas fa-temperature-high"></i> 保存补偿参数</button></div>
+                        </div>
+                        <div class="card firmware-panel">
+                            <div class="card-header"><h3><i class="fas fa-cloud-download-alt"></i> 固件升级</h3></div>
+                            <div class="cal-content"><div class="firmware-info"><div class="fw-row"><span>当前固件版本:</span><span class="fw-version">v2.1.3</span></div><div class="fw-row"><span>最新固件版本:</span><span class="fw-version latest">v2.2.0</span></div><div class="fw-row"><span>更新内容:</span><span>优化温度补偿算法，提升测量稳定性</span></div></div><button class="btn btn-primary" id="btnFirmwareUpdate"><i class="fas fa-cloud-download-alt"></i> 下载并升级固件</button></div>
+                        </div>
+                        <div class="card self-check-panel">
+                            <div class="card-header"><h3><i class="fas fa-stethoscope"></i> 自检诊断</h3></div>
+                            <div class="cal-content"><button class="btn btn-primary" id="btnSelfCheck"><i class="fas fa-stethoscope"></i> 一键自检</button><div class="check-results" id="checkResults"><div class="check-item pending"><i class="fas fa-hourglass-half"></i><span>点击"一键自检"开始诊断</span></div></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 导出分享 -->
+                <div class="page" id="page-export">
+                    <div class="export-layout">
+                        <div class="card export-format-panel">
+                            <div class="card-header"><h3><i class="fas fa-file-export"></i> 导出报告</h3></div>
+                            <div class="export-content">
+                                <div class="export-options">
+                                    <div class="export-option active" data-format="pdf"><i class="fas fa-file-pdf"></i><span>PDF 报告</span></div>
+                                    <div class="export-option" data-format="excel"><i class="fas fa-file-excel"></i><span>Excel 表格</span></div>
+                                    <div class="export-option" data-format="csv"><i class="fas fa-file-csv"></i><span>CSV 数据</span></div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group"><label>选择数据范围</label><select id="exportRange"><option value="all">全部记录</option><option value="selected">当前选中</option><option value="date">按日期范围</option></select></div>
+                                    <div class="form-group"><label>包含内容</label><div style="display:flex;gap:12px;padding-top:4px;"><label style="font-size:13px;display:flex;align-items:center;gap:4px;"><input type="checkbox" checked> 原始数据</label><label style="font-size:13px;display:flex;align-items:center;gap:4px;"><input type="checkbox" checked> 统计图表</label><label style="font-size:13px;display:flex;align-items:center;gap:4px;"><input type="checkbox"> 现场照片</label></div></div>
+                                </div>
+                                <button class="btn btn-primary" id="btnExport"><i class="fas fa-file-export"></i> 生成报告</button>
+                            </div>
+                        </div>
+                        <div class="card share-panel">
+                            <div class="card-header"><h3><i class="fas fa-share-alt"></i> 分享方式</h3></div>
+                            <div class="export-content">
+                                <div class="share-methods">
+                                    <button class="share-btn"><i class="fas fa-envelope"></i> 邮件</button>
+                                    <button class="share-btn"><i class="fab fa-weixin"></i> 微信</button>
+                                    <button class="share-btn"><i class="fab fa-bluetooth-b"></i> 蓝牙</button>
+                                    <button class="share-btn"><i class="fas fa-cloud"></i> 云盘</button>
+                                    <button class="share-btn"><i class="fas fa-print"></i> 打印</button>
+                                </div>
+                                <div style="margin-top:20px;padding:16px;background:var(--bg);border-radius:var(--radius-sm);">
+                                    <p style="font-size:13px;color:var(--text-secondary);margin-bottom:8px;"><i class="fas fa-cloud-upload-alt"></i> 云端同步（可选）</p>
+                                    <p style="font-size:12px;color:var(--text-light);margin-bottom:12px;">测量数据自动上传到企业云平台，后端可生成整条线路的病害图。</p>
+                                    <button class="btn-sm btn-outline"><i class="fas fa-cloud"></i> 配置云同步</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card recent-exports-panel" style="grid-column:1/-1;">
+                            <div class="card-header"><h3><i class="fas fa-history"></i> 最近导出</h3></div>
+                            <div class="export-content"><div class="record-list" id="recentExportList"></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 系统设置 -->
+                <div class="page" id="page-settings">
+                    <div class="settings-layout">
+                        <div class="card general-settings-panel">
+                            <div class="card-header"><h3><i class="fas fa-sliders-h"></i> 通用设置</h3></div>
+                            <div class="settings-content">
+                                <div class="setting-item"><div class="setting-info"><h4>自动连接设备</h4><p>启动时自动连接上次使用的轨距尺</p></div><div class="toggle active" data-setting="autoConnect"></div></div>
+                                <div class="setting-item"><div class="setting-info"><h4>语音播报</h4><p>测量结果语音播报</p></div><div class="toggle" data-setting="voiceReport"></div></div>
+                                <div class="setting-item"><div class="setting-info"><h4>超限弹窗提醒</h4><p>测量值超限时弹出提醒窗口</p></div><div class="toggle active" data-setting="alarmPopup"></div></div>
+                                <div class="setting-item"><div class="setting-info"><h4>自动保存</h4><p>测量数据自动保存到本地</p></div><div class="toggle active" data-setting="autoSave"></div></div>
+                                <div class="setting-item"><div class="setting-info"><h4>云端同步</h4><p>测量数据自动上传到云端</p></div><div class="toggle" data-setting="cloudSync"></div></div>
+                            </div>
+                        </div>
+                        <div class="card alarm-threshold-panel">
+                            <div class="card-header"><h3><i class="fas fa-exclamation-triangle"></i> 报警阈值</h3></div>
+                            <div class="settings-content">
+                                <div class="setting-item"><div class="setting-info"><h4>轨距偏差阈值</h4><p>当前: ±4.0 mm</p></div><input type="range" min="1" max="10" value="4" step="0.5" style="width:120px;"></div>
+                                <div class="setting-item"><div class="setting-info"><h4>水平偏差阈值</h4><p>当前: ±5.0 mm</p></div><input type="range" min="1" max="10" value="5" step="0.5" style="width:120px;"></div>
+                                <div class="setting-item"><div class="setting-info"><h4>三角坑偏差阈值</h4><p>当前: ±3.0 mm</p></div><input type="range" min="1" max="10" value="3" step="0.5" style="width:120px;"></div>
+                                <div class="setting-item"><div class="setting-info"><h4>轨向偏差阈值</h4><p>当前: ±4.0 mm</p></div><input type="range" min="1" max="10" value="4" step="0.5" style="width:120px;"></div>
+                            </div>
+                        </div>
+                        <div class="card data-management-panel">
+                            <div class="card-header"><h3><i class="fas fa-database"></i> 数据管理</h3></div>
+                            <div class="settings-content">
+                                <div class="setting-item"><div class="setting-info"><h4>清理所有记录</h4><p>删除全部测量数据，不可恢复</p></div><button class="btn-sm btn-danger"><i class="fas fa-trash"></i> 清理</button></div>
+                                <div class="setting-item"><div class="setting-info"><h4>导出备份</h4><p>将所有数据导出为JSON备份文件</p></div><button class="btn-sm btn-primary"><i class="fas fa-download"></i> 导出</button></div>
+                                <div class="setting-item"><div class="setting-info"><h4>导入备份</h4><p>从JSON备份文件恢复数据</p></div><button class="btn-sm btn-outline"><i class="fas fa-upload"></i> 导入</button></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ===== 用户资料模态框 ===== -->
+    <div class="profile-modal" id="profileModal">
+        <div class="profile-modal-content">
+            <div class="profile-modal-header">
+                <h3><i class="fas fa-user-edit"></i> 编辑个人信息</h3>
+                <button class="profile-modal-close" id="profileModalClose"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="profile-modal-body">
+                <div class="form-group"><label>用户名</label><input type="text" id="editUsername" placeholder="用户名"></div>
+                <div class="form-group"><label>单位名称</label><input type="text" id="editCompany" placeholder="单位名称"></div>
+                <div class="form-group"><label>联系电话</label><input type="text" id="editPhone" placeholder="联系电话"></div>
+            </div>
+            <div class="profile-modal-footer">
+                <button class="btn btn-outline" id="profileModalCancel">取消</button>
+                <button class="btn btn-primary" id="profileModalSave"><i class="fas fa-save"></i> 保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== 模态框 ===== -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">提示</h3>
+                <button class="modal-close" id="modalClose"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body"><p id="modalMessage"></p></div>
+            <div class="modal-footer"><button class="btn btn-primary" id="modalConfirm">确定</button></div>
+        </div>
+    </div>
+
+    <!-- ===== Toast 容器 ===== -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
