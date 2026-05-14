@@ -1,0 +1,17 @@
+{
+  "name": "轨距智测先锋",
+  "short_name": "轨距智测",
+  "description": "智能轨距测量系统 - 红外自动测量、蓝牙实时同步、智能数据分析",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#f0f4ff",
+  "theme_color": "#1a73e8",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
